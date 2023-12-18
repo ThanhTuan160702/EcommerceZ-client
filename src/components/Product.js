@@ -7,6 +7,8 @@ import {SelectOption} from '../components/index'
 import { FaEye } from "react-icons/fa";
 import { MdOutlineMenu } from "react-icons/md";
 import { FaHeart } from "react-icons/fa";
+import { Link } from 'react-router-dom'
+import path from '../utils/path'
 
 const Product = ({productData, activedTab}) => {
 
@@ -14,7 +16,8 @@ const Product = ({productData, activedTab}) => {
 
   return (
     <div className='w-full text-base px-[10px]'>
-      <div className='w-full border p-[15px]' 
+      <Link className='w-full p-[15px] flex flex-col items-center' 
+      to={`/${productData?.category?.toLowerCase()}/${productData?._id}/${productData?.title}`}
       onMouseEnter={e => {
         e.stopPropagation()
         setIsShow(true)
@@ -30,7 +33,7 @@ const Product = ({productData, activedTab}) => {
               <SelectOption icons={<MdOutlineMenu/>}/>
               <SelectOption icons={<FaEye/>}/>
           </div>}
-          <img src={productData.images[0]} alt='images' className='w-[243px] h-[243px] object-cover'/>
+          <img src={productData.images[0]} alt='images' className='w-[274px] h-[274px] object-cover'/>
           <img src={activedTab === 1 ? Image1 : Image} alt='images' className={`${activedTab === 1 ? "w-[80px]" : "w-[120px]"} absolute top-[-25px] right-[-15px]`}/>
         </div>
         <div className='flex flex-col gap-1 mt-[15px] items-start w-full'>
@@ -38,7 +41,7 @@ const Product = ({productData, activedTab}) => {
           <span className='line-clamp-1'>{productData.title}</span>
           <span>{`${formatPrice(productData.price)} VND`}</span>
         </div>
-      </div>
+      </Link>
     </div>
   )
 }

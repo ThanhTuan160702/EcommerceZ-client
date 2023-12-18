@@ -30,12 +30,13 @@ const Header = () => {
             </span>
             <span>Online Support 24/7</span>
           </div>
-          <div className='flex border-r-2 px-6 gap-2 items-center justify-center'>
+          <div className='flex border-r-2 px-6 gap-2 items-center justify-center cursor-pointer'>
             <span><BsBagCheckFill color='red' /></span>
             <span>0 item(s)</span>
           </div>
-          <div className='flex items-center justify-center px-6'>
+          <div className='flex items-center justify-center px-6 gap-2 cursor-pointer'>
             <FaUserCircle color='red' size={24}/>
+            <span>Profile</span>
           </div>
        </div>
     </div>

@@ -17,7 +17,6 @@ const FeartureProducts = () => {
         fetchData()
     },[])
 
-    console.log(products)
 
   return (
     <div className='w-full'>
@@ -25,7 +24,7 @@ const FeartureProducts = () => {
         <div className='flex flex-wrap mt-[15px] mx-[-10px]'>
             {products?.map(el=>(
                 <ProductCard 
-                key={el.id}
+                key={el._id}
                 productData={el}
                 />
             ))}

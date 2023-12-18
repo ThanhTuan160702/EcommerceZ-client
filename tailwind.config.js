@@ -8,6 +8,13 @@ module.exports = {
     fontFamily:{
       main: ['Poppins', 'sans-serif']
     },
+    listStyleType:{
+      none: 'none',
+      disc: 'disc',
+      decimal: 'decimal',
+      square: 'square',
+      roman: 'upper-roman'
+    },
     extend: {
       width:{
         main: '1220px'
@@ -16,7 +23,8 @@ module.exports = {
         main: '#ee3131'
       },
       colors: {
-        main: '#ee3131'
+        main: '#ee3131',
+        opacity: 'rgba(255, 255, 255, 0.3)'
       },
       keyframes: {
         'slide-top': {

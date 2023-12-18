@@ -6,6 +6,7 @@ import { MdOutlineMenu } from "react-icons/md";
 import { Countdown } from '../components/index'
 
 
+
 const DealDaily = () => {
 
     const [dealDaily, setDealDaily] = useState(null)
