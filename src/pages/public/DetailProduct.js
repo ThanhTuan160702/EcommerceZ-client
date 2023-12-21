@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
-import { apiGetProduct } from '../../apis'
-import { BreadCrumbs, Button, SelectQuantity } from '../../components'
+import { apiGetProduct, apiGetProducts } from '../../apis'
+import { BreadCrumbs, Button, SelectQuantity, MoreInformation, ProductInformation, CustomSlider } from '../../components'
 import Slider from 'react-slick';
 import ReactImageMagnify from 'react-image-magnify';
 import { formatPrice, renderStar} from '../../utils/helper';
@@ -18,18 +18,31 @@ const settings = {
 const DetailProduct = () => {
   const {pid , title, category} = useParams()
   const [product, setProduct] = useState(null)
+  const [productSlider, setProductSlider] = useState(null)
   const [quantity, setQuantity] = useState(1)
+
   const fetchData = async() => {
     const response = await apiGetProduct(pid)
     if(response?.success){
       setProduct(response?.mes)
     }
   }
+
+  const fetchCustom = async() => {
+    const response = await apiGetProducts({category})
+    setProductSlider(response?.mes)
+  }
+
   useEffect(()=>{
     if(pid){
-      fetchData() 
+      fetchData()
+      fetchCustom() 
     }
   },[pid])
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleQuantity = useCallback((number)=>{
     if(!Number(number) || Number(number) < 0 || Number(number) > 99){ 
@@ -58,25 +71,24 @@ const DetailProduct = () => {
       </div>
       <div className='bg-white w-main m-auto mt-4 flex'>
         <div className='w-[40%] gap-4 flex flex-col'>
-          <img src={product?.images[0]} alt='' className='w-[458px] h-[458px] border object-cover' />
-          <div className='w-[458px]'>
-            <Slider className='image-slider' {...settings} >
-              {product?.images.map(el=>(
-                <div className='flex w-full justify-around' key={el}>
-                  <img src={el} alt='' className='h-[143px] w-[143px] border object-cover'/>
+          <img src={product?.images[0]} alt='' className='w-[458px] h-[458px] border border-black object-cover' />
+          <div className='w-[458px] h-[143px]'>
+            <Slider className='image-slider mx-[-8px]' {...settings} >
+              {product?.images.map((el, index)=>(
+                <div className='px-2' key={index}>
+                  <img src={el} alt='' className='h-[143px] w-[153px] border border-black object-cover p-2'/>
                 </div>
               ))}
             </Slider>
           </div>
         </div>
-        <div className='w-[40%] border flex flex-col gap-4'>
+        <div className='w-[40%] flex flex-col gap-4'>
           <div className='flex items-center justify-between'>
             <h2 className='text-[30px] font-semibold'>{`${formatPrice(product?.price)}₫`}</h2>
-            <span className='text-sm text-main'>{`Quantity: ${product?.quantity}`}</span>
           </div>
           <div className='flex items-center gap-2 italic'>
             <span className='flex'>{renderStar(product?.totalRatings)}</span>
-            <span className='text-sm text-main'>{`Sold: ${product?.sold}`}</span>
+            <span >1 review</span>
           </div>
           <ul className='text-sm list-disc pl-4 text-gray-500 leading-6'>
             {product?.description.map((el, index)=>(
@@ -90,12 +102,19 @@ const DetailProduct = () => {
             </Button>
           </div>
         </div>
-        <div className='w-[20%] border'>
-          info
+        <div className='w-[20%] pl-6 flex flex-col gap-3'>
+          <MoreInformation />
         </div>
       </div>
-      <div className='h-[500px] w-full'>
-
+      <div className='w-main m-auto mt-8'>
+          <ProductInformation product={product}/>
+      </div>
+      <div className='w-main m-auto mt-4'>
+          <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-main mb-2'>OTHER CUSTOMERS ALSO BUY:</h3>
+          <CustomSlider products={productSlider}/>
+      </div>
+      <div className='h-[500px] w-main m-auto mt-8 border'>
+            <h1>{}</h1>
       </div>
     </div>
   )

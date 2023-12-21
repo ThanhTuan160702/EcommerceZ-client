@@ -10,7 +10,7 @@ import { FaHeart } from "react-icons/fa";
 import { Link } from 'react-router-dom'
 import path from '../utils/path'
 
-const Product = ({productData, activedTab}) => {
+const Product = ({productData, activedTab, isImage}) => {
 
   const [isShow, setIsShow] = useState(false)
 
@@ -34,7 +34,7 @@ const Product = ({productData, activedTab}) => {
               <SelectOption icons={<FaEye/>}/>
           </div>}
           <img src={productData.images[0]} alt='images' className='w-[274px] h-[274px] object-cover'/>
-          <img src={activedTab === 1 ? Image1 : Image} alt='images' className={`${activedTab === 1 ? "w-[80px]" : "w-[120px]"} absolute top-[-25px] right-[-15px]`}/>
+          {!isImage && <img src={activedTab === 1 ? Image1 : Image} alt='images' className={`${activedTab === 1 ? "w-[80px]" : "w-[120px]"} absolute top-[-25px] right-[-15px]`}/>}
         </div>
         <div className='flex flex-col gap-1 mt-[15px] items-start w-full'>
           <span className='flex'>{renderStar(productData?.totalRatings)}</span>

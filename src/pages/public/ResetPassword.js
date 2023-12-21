@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from '../../components'
-import { useParams, useNavigat, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { apiResetPassword } from '../../apis/user'
 import Swal from 'sweetalert2'
 

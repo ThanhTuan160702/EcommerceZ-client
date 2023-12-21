@@ -88,8 +88,8 @@ const Login = () => {
           <label htmlFor='email'>Enter your email:</label>
           <input type='text' id='email'className='pb-2 border-b outline-none'placeholder='email' value={email} onChange={e=>setEmail(e.target.value)}/>
           <div className='flex justify-end gap-2'>
-            <Button name='Submit' handleOnClick={handleForgot}/>
-            <Button name='Close' handleOnClick={()=>{setIsForgot(false)}}/>
+            <Button children='Submit' handleOnClick={handleForgot}/>
+            <Button children='Close' handleOnClick={()=>{setIsForgot(false)}}/>
         </div>
         </div>
       </div>}
@@ -133,7 +133,7 @@ const Login = () => {
           placeholder='Password Confirm'
           />}
           <Button 
-          name={register ? 'Register' : 'Login'}
+          children={register ? 'Register' : 'Login'}
           style='w-full bg-blue-500 rounded-md text-white h-[40px] mt-2'
           handleOnClick={handleSubmit} 
           />

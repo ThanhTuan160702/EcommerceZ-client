@@ -39,13 +39,13 @@
 }
 
 .image-slider button.slick-next{
-    right: 0px;
+    right: 28px;
     top: 60px;
     z-index: 10;
 }
 
 .image-slider button.slick-prev{
-    left: 0px;
+    left: 8px;
     top: 60px;
     z-index: 10;
 }
