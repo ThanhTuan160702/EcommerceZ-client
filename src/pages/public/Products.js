@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { BreadCrumbs,Product, SearchItem} from '../../components'
 import { apiGetProducts } from '../../apis'
 import Masonry from 'react-masonry-css';
@@ -16,15 +16,21 @@ const Products = () => {
   const { category } = useParams()
   const [product, setProduct] = useState(null)
   const [activeClick, setActiveClick] = useState(null)
+  const [params] = useSearchParams()
 
-  const fetch = async(category) =>{
-    const response = await apiGetProducts({category})
+  const fetch = async(queries) =>{
+    const response = await apiGetProducts(queries)
     setProduct(response?.mes)
   }
 
   useEffect(()=>{
-    fetch(category)
-  },[])
+    let param = []
+    for(let i of params.entries()) param.push(i)
+    const queries = {}
+    for(let i of params)
+    queries[i[0]] = i[1]
+    fetch(queries)
+  },[params])
 
   const changeActiveClick = useCallback((name)=>{
     if(activeClick === name){
@@ -46,8 +52,8 @@ const Products = () => {
         <div className='w-4/5 flex flex-col gap-2'>
             <span>Filter by</span>
             <div className='flex gap-2'>
-              <SearchItem name='price' activeClick={activeClick} type='input' changeActiveClick={changeActiveClick}/>
-              <SearchItem name='color' activeClick={activeClick} changeActiveClick={changeActiveClick}/>
+              <SearchItem category={category} name='price' activeClick={activeClick} type='input' changeActiveClick={changeActiveClick}/>
+              <SearchItem category={category} name='color' activeClick={activeClick} changeActiveClick={changeActiveClick}/>
             </div>
         </div>
         <div className='w-1/5'>

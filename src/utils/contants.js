@@ -74,15 +74,14 @@ export const tabs = [
 
 
 export const color = [
-  'black',
-  'blue',
-  'red',
-  'orange',
-  'pink',
-  'green',
-  'brown',
-  'yellow',
-  'gray',
-  'white',
-  'purple'
+  'Đen',
+  'Xanh',
+  'Đỏ',
+  'Cam',
+  'Hồng',
+  'Nâu',
+  'Vàng',
+  'Xám',
+  'Trắng',
+  'Tím'
 ]
