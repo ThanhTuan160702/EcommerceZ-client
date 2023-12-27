@@ -19,12 +19,14 @@ const DetailProduct = () => {
   const {pid , title, category} = useParams()
   const [product, setProduct] = useState(null)
   const [productSlider, setProductSlider] = useState(null)
+  const [currentImg, setCurrentImg] = useState(null)
   const [quantity, setQuantity] = useState(1)
 
   const fetchData = async() => {
     const response = await apiGetProduct(pid)
     if(response?.success){
       setProduct(response?.mes)
+      setCurrentImg(response?.mes.images[0])
     }
   }
 
@@ -71,12 +73,12 @@ const DetailProduct = () => {
       </div>
       <div className='bg-white w-main m-auto mt-4 flex'>
         <div className='w-[40%] gap-4 flex flex-col'>
-          <img src={product?.images[0]} alt='' className='w-[458px] h-[458px] border border-black object-cover' />
+          <img src={currentImg} alt='' className='w-[458px] h-[458px] border border-black object-cover' />
           <div className='w-[458px] h-[143px]'>
             <Slider className='image-slider mx-[-8px]' {...settings} >
               {product?.images.map((el, index)=>(
                 <div className='px-2' key={index}>
-                  <img src={el} alt='' className='h-[143px] w-[153px] border border-black object-cover p-2'/>
+                  <img onClick={()=> setCurrentImg(el)} src={el} alt='' className='h-[143px] w-[153px] border border-black object-cover p-2 cursor-pointer'/>
                 </div>
               ))}
             </Slider>

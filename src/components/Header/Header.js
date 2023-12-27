@@ -4,9 +4,14 @@ import { IoIosMail } from "react-icons/io";
 import { FaUserCircle } from "react-icons/fa";
 import { BsBagCheckFill } from "react-icons/bs";
 import { Link } from 'react-router-dom'
-import path from '../utils/path'
+import path from '../../utils/path'
+import { useSelector } from 'react-redux';
 
 const Header = () => {
+
+  const { current } = useSelector(state => state.user)
+  console.log(current)
+  
   return (
     <div className='flex justify-between w-main h-[110px] py-[35px]'>
        <Link to={`/${path.HOME}`}>
@@ -34,10 +39,10 @@ const Header = () => {
             <span><BsBagCheckFill color='red' /></span>
             <span>0 item(s)</span>
           </div>
-          <div className='flex items-center justify-center px-6 gap-2 cursor-pointer'>
+          <Link to={+current?.role === 6666 ? `/${path.MEMBER}/${path.PERSONAL}` : `/${path.ADMIN}/${path.DASHBOARD}`} className='flex items-center justify-center px-6 gap-2 cursor-pointer'>
             <FaUserCircle color='red' size={24}/>
             <span>Profile</span>
-          </div>
+          </Link>
        </div>
     </div>
   )

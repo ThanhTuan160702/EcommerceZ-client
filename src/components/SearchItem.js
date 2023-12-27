@@ -1,13 +1,19 @@
 import React,{ memo, useEffect, useState } from 'react'
 import { FaAngleDown } from "react-icons/fa";
 import { color } from '../utils/contants';
-import { createSearchParams, useNavigate} from 'react-router-dom';
+import { createSearchParams, useNavigate, useSearchParams} from 'react-router-dom';
 import path from '../utils/path';
+import useDebounce from '../hooks/useDebounce';
 
-const SearchItem = ({category ,name, activeClick, changeActiveClick, type = 'checkbox'}) => {
+const SearchItem = ({category ,name, activeClick, changeActiveClick, type = 'checkbox', handleCurrentPage}) => {
 
     const [selected, setSelected] = useState([])
+    const [params] = useSearchParams()
     const navigate = useNavigate()
+    const [price, setPrice] = useState({
+        from: '',
+        to: ''
+    })
     const handleSelected = (e) =>{
         const alreadyEl = selected.find(el => el === e)
         if(alreadyEl){
@@ -18,17 +24,49 @@ const SearchItem = ({category ,name, activeClick, changeActiveClick, type = 'che
     }
 
     useEffect(()=>{
+        let param = []
+        for(let i of params.entries()) param.push(i)
+        const queries = {}
+        for(let i of param) queries[i[0]] = i[1]
         if(selected.length > 0){
-            navigate({
-                pathname: `/${category}`,
-                search: createSearchParams({
-                    color: selected.join(',')
-                }).toString()
-            })
+            queries.color = selected.join(',')
+            queries.page = 1
+            handleCurrentPage(1)
         }else{
-            navigate(`/${category}`)
+            delete queries.color
         }
+        navigate({
+            pathname: `/${category}`,
+            search: createSearchParams(queries).toString()
+        })
     },[selected])
+
+    
+    const debouncePriceFrom = useDebounce(price.from,500)
+    const debouncePriceTo = useDebounce(price.to,500)
+
+    useEffect(()=>{
+        let param = []
+        for(let i of params.entries()) param.push(i)
+        const queries = {}
+        for(let i of param) queries[i[0]] = i[1]
+        queries.page = 1
+        if(Number(price.from) > 0){
+            queries.from = price.from
+        }else{
+            delete queries.from
+        }
+        if(Number(price.to) > 0){
+            queries.to = price.to
+        }else{
+            delete queries.to
+        }
+        handleCurrentPage(1)
+        navigate({
+            pathname: `/${category}`,
+            search: createSearchParams(queries).toString()
+        })
+    },[debouncePriceFrom, debouncePriceTo])
     
   return (
     <div onClick={()=>changeActiveClick(name)} 
@@ -57,10 +95,33 @@ const SearchItem = ({category ,name, activeClick, changeActiveClick, type = 'che
                     ))}
                 </div>
             </div>}
-            {type === 'input' && <div>
-                <div className='p-4 justify-between flex gap-8'>
-                    <input onClick={e => e.stopPropagation()} type='number' className='border flex'></input>
-                    <input onClick={e => e.stopPropagation()} type='number' className='border flex'></input>
+            {type === 'input' && <div onClick={e => {e.stopPropagation()}}>
+                <div className='p-4 justify-between flex gap-2'>
+                    <span onClick={() => setPrice({from: '', to: ''})} className='underline cursor-pointer'>Reset</span> 
+                </div>
+                <div className='flex items-center gap-2'>
+                    <div className='flex gap-2 items-center'>
+                        <label htmlFor='from'>From</label>
+                        <input 
+                        onClick={e => e.stopPropagation()} 
+                        type='number' 
+                        className='border flex p-2' 
+                        id='from'
+                        value={price.from}
+                        onChange={e => setPrice(prev => ({...prev, from: e.target.value}))}
+                        ></input>
+                    </div>
+                    <div className='flex gap-2 items-center'>
+                        <label htmlFor='to'>To</label>
+                        <input 
+                        onClick={e => e.stopPropagation()} 
+                        type='number' 
+                        className='border flex p-2' 
+                        id='to'
+                        value={price.to}
+                        onChange={e => setPrice(prev => ({...prev, to: e.target.value}))} 
+                        ></input>
+                    </div>
                 </div>
             </div>}
         </div>

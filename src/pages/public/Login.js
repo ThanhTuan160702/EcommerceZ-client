@@ -1,16 +1,17 @@
 import React, {useState, useCallback} from 'react'
-import { InputFill, Button } from '../../components/index'
+import { InputFill, Button, Loading } from '../../components/index'
 import { apiRegister, apiLogin, apiForgot } from '../../apis/user'
 import { useNavigate, Link } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import {loggedin} from '../../store/user/userSlice'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import path from '../../utils/path'
 
 const Login = () => {
 
   const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(false)
 
   const [payload, setPayload] = useState({
     lastname: '',
@@ -50,7 +51,9 @@ const Login = () => {
       const { lastname, firstname, passwordConfirm, ...data } = payload
       if(register){
         if(data.password === passwordConfirm){
+          setIsLoading(true)
           const reponse = await apiRegister(payload)
+          setIsLoading(false)
           if(reponse?.success){
             Swal.fire('Congratulation',reponse?.mes,'success').then(()=>{
               setRegister(false)
@@ -63,7 +66,9 @@ const Login = () => {
           Swal.fire('Oops!','Password Mismatch Error','error')
         }
       }else{
+        setIsLoading(true)
         const login = await apiLogin(data)
+        setIsLoading(false)
         if(login?.success){
           Swal.fire('Congratulation','Logged in successfully','success').then(()=>{
             dispatch(loggedin({isLoggedIn: true,token: login.accessToken, userData: login.userData}))
@@ -77,6 +82,10 @@ const Login = () => {
 
   return (
     <div className='w-screen h-screen relative'>
+      {isLoading && 
+      <div className='bottom-0 top-0 left-0 right-0 flex absolute items-center justify-center z-50 bg-opacity'>
+        <Loading/>
+      </div>}
       <img 
       src='https://images.unsplash.com/photo-1500053857731-701d06fac2fa?q=80&w=1864&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' 
       alt='images'

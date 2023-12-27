@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
-import { BreadCrumbs,Product, SearchItem} from '../../components'
+import { useParams, useSearchParams, useNavigate, createSearchParams} from 'react-router-dom'
+import { BreadCrumbs,InputSelect,Pagination,Product, SearchItem} from '../../components'
 import { apiGetProducts } from '../../apis'
 import Masonry from 'react-masonry-css';
+import { sorts } from '../../utils/contants';
 
 const breakpointColumnsObj = {
   default: 4,
@@ -17,19 +18,37 @@ const Products = () => {
   const [product, setProduct] = useState(null)
   const [activeClick, setActiveClick] = useState(null)
   const [params] = useSearchParams()
-
+  const [sort, setSort] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const navigate = useNavigate()
   const fetch = async(queries) =>{
     const response = await apiGetProducts(queries)
-    setProduct(response?.mes)
+    setProduct(response)
   }
-
   useEffect(()=>{
     let param = []
     for(let i of params.entries()) param.push(i)
     const queries = {}
-    for(let i of params)
+    for(let i of param)
     queries[i[0]] = i[1]
-    fetch(queries)
+    let priceQuery = {}
+    if(queries.from && queries.to){
+      priceQuery = {
+        $and: [
+          {price: {gte: queries.from}},
+          {price: {lte: queries.to}}
+        ]
+      }
+      delete queries.price
+    }else{
+      if(queries.from) queries.price = { gte: queries.from }
+      if(queries.to) queries.price = { lte: queries.to }
+    }
+    delete queries.from
+    delete queries.to
+    console.log({category, ...priceQuery,...queries})
+    fetch({category,...priceQuery, ...queries})
+    window.scrollTo(0, 0)
   },[params])
 
   const changeActiveClick = useCallback((name)=>{
@@ -39,6 +58,36 @@ const Products = () => {
       setActiveClick(name)
     }
   },[activeClick])
+
+  const changeValue = useCallback((value)=>{
+    setSort(value)
+  },[sort])
+
+  useEffect(()=>{
+    if(sort){
+      navigate({
+        pathname: `/${category}`,
+        search: createSearchParams({sort}).toString()
+      })
+  }
+  },[sort])
+
+  const handleCurrentPage = useCallback((number)=>{
+    if(!Number(number) || Number(number) < 0 || Number(number) > 99){ 
+      return
+    }else{
+      setCurrentPage(number)
+    }
+  },[currentPage])
+
+  const handleChangeCurrentPage = useCallback((text)=>{
+    if(text==='-' && +currentPage > 1){
+      setCurrentPage(+currentPage-1)
+    }
+    if(text==='+' && +currentPage < 99){
+      setCurrentPage(+currentPage+1)
+    }
+  },[currentPage])
 
   return (
     <div className='w-full mt-[-1px]'>
@@ -52,26 +101,30 @@ const Products = () => {
         <div className='w-4/5 flex flex-col gap-2'>
             <span>Filter by</span>
             <div className='flex gap-2'>
-              <SearchItem category={category} name='price' activeClick={activeClick} type='input' changeActiveClick={changeActiveClick}/>
-              <SearchItem category={category} name='color' activeClick={activeClick} changeActiveClick={changeActiveClick}/>
+              <SearchItem handleCurrentPage={handleCurrentPage} category={category} name='price' activeClick={activeClick} type='input' changeActiveClick={changeActiveClick}/>
+              <SearchItem handleCurrentPage={handleCurrentPage} category={category} name='color' activeClick={activeClick} changeActiveClick={changeActiveClick}/>
             </div>
         </div>
-        <div className='w-1/5'>
+        <div className='w-1/5 flex flex-col gap-2'>
             <h1>Sort by</h1>
+            <InputSelect value={sort} options={sorts} changeValue={changeValue}/>
         </div>
       </div>
-      <div className='w-main m-auto mt-4 h-[1500px]'>
+      <div className='w-main m-auto mt-4 '>
       <Masonry
         breakpointCols={breakpointColumnsObj}
         className="my-masonry-grid flex gap-4"
         columnClassName="my-masonry-grid_column"
       >
-        {product?.map((el)=>(
+        {product?.mes?.map((el)=>(
           <div className='border mb-4'>
             <Product isImage={true} productData={el} />
           </div>
         ))}
       </Masonry>
+      </div>
+      <div className='w-main m-auto flex justify-end'>
+        <Pagination totalPage={product?.counts} currentPage={currentPage} handleChangeCurrentPage={handleChangeCurrentPage} handleCurrentPage={handleCurrentPage}/>
       </div>
     </div>
   )

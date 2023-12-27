@@ -5,10 +5,10 @@ export const formatPrice = number => Number(number?.toFixed(1)).toLocaleString()
 export const renderStar = (number) => {
     const stars = []
     for(let i=0;i<+number;i++){
-        stars.push(<FaStar color="yellow" key={i}/>)
+        stars.push(<FaStar color="orange" key={i}/>)
     }
     for(let i=5;i>+number;i--){
-        stars.push(<FaRegStar color="yellow" key={i}/>)
+        stars.push(<FaRegStar color="orange" key={i}/>)
     }
     return stars
 }
@@ -18,4 +18,9 @@ export const ValidateEmail = (mail) => {
     }else{
         return true
     }
+}
+
+export const generateRange = (start, end) => {
+    const length = end+1-start
+    return Array.from({length},(_,index)=>start+index)
 }
